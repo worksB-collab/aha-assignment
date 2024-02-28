@@ -1,0 +1,27 @@
+<form action="/auth/signup" method="post">
+  <div>
+    <label>name</label>
+    <input name="name" required type="text">
+  </div>
+  <div>
+    <label>email</label>
+    <input name="email" required type="email">
+  </div>
+  <div>
+    <label>password</label>
+    <input name="password" required type="password">
+  </div>
+  <div>
+    <label>repeat your password</label>
+    <input name="repeatedPassword" required type="password">
+    <p>
+      - contains at least one lower character
+      - contains at least one upper character
+      - contains at least one digit character
+      - contains at least one special character
+      - contains at least 8 characters
+    </p>
+  </div>
+
+  <button type="submit">Sign Up</button>
+</form>
