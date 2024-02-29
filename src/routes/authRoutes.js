@@ -5,7 +5,9 @@ const router = express.Router();
 router.post('/signup', authController.signUp);
 router.post('/signin', authController.signIn);
 router.get('/verify-email', authController.verifyEmail);
+router.get('/resend-email', authController.resendEmail);
 router.get('/logout', authController.logout);
+router.get('/get-profile', authController.getProfile);
 
 // Google OAuth
 router.get('/google', authController.googleSignIn);

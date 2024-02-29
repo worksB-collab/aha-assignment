@@ -10,6 +10,11 @@ const signUp = async (name, email, password, repeatedPassword) => {
   await sendVerificationEmail(email, token);
 };
 
+const resendVerificationEmail = async (email) => {
+  const user = await userService.findUserByEmail(email);
+  await sendVerificationEmail(email, user.token);
+}
+
 const verifyToken = async (token) => {
   const user = await userService.findUserByToken(token);
   user.verified = true;
@@ -24,9 +29,13 @@ const signIn = async (email, password) => {
   }
 };
 
+const getProfile = async (token) => {
+  return await userService.findUserByToken(token)
+}
+
 
 module.exports = {
-  signUp, verifyToken, signIn
+  signUp, resendVerificationEmail, verifyToken, signIn, getProfile
 }
 
 
