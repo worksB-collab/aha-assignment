@@ -3,15 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <title>Profile</title>
+  <link href="../stylesheets/style.css" rel="stylesheet">
 </head>
 <body>
 <h2>Profile</h2>
-<label>name</label>
-<p id="name"></p>
-<label>email</label>
-<p id="email"></p>
-<a href="/dashboard">Dashboard</a>
-<a href="/auth/logout">Logout</a>
+<div class="field-container">
+  <div class="field">
+    <label>Name:</label>
+    <p class="response-data" id="name"></p>
+
+    <label for="new-name">Reset Name</label>
+    <input id="new-name" placeholder="Enter new name" type="text"/> <!-- New name input -->
+    <button id="apply-name-btn">Apply Name</button> <!-- Apply name button -->
+  </div>
+  <div class="field">
+    <label>Email:</label>
+    <p class="response-data" id="email"></p>
+  </div>
+</div>
+
+<div class="btn-container">
+  <a href="/dashboard">Dashboard</a>
+  <a href="/auth/logout">Logout</a>
+</div>
 <script src="../javascripts/getProfile.js" type="module"></script>
 </body>
 </html>

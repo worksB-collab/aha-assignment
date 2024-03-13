@@ -29,13 +29,8 @@ const signIn = async (email, password) => {
   }
 };
 
-const getProfile = async (token) => {
-  return await userService.findUserByToken(token)
-}
-
-
 module.exports = {
-  signUp, resendVerificationEmail, verifyToken, signIn, getProfile
+  signUp, resendVerificationEmail, verifyToken, signIn
 }
 
 

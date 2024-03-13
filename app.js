@@ -33,7 +33,7 @@ app.get('/profile', (req, res, next) => {
     if (!token) {
       return res.redirect('/signin');
     }
-    req.user = jwt.verify(token, process.env.JWT_SECRET);
+    jwt.verify(token, process.env.JWT_SECRET);
     // If authentication succeeds, serve the dashboard HTML
     return directPage(`profile.html`)(req, res, next);
   } catch (error) {
@@ -45,7 +45,7 @@ app.get('/dashboard', (req, res, next) => {
   try {
     const {token, email} = req.cookies;
     if (token) {
-      req.user = jwt.verify(token, process.env.JWT_SECRET);
+      jwt.verify(token, process.env.JWT_SECRET);
       // If authentication succeeds, serve the dashboard HTML
       return directPage(`verifiedDashboard.html`)(req, res, next);
     } else if (!token && email) {

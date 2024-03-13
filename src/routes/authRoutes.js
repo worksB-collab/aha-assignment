@@ -8,6 +8,7 @@ router.get('/verify-email', authController.verifyEmail);
 router.get('/resend-email', authController.resendEmail);
 router.get('/logout', authController.logout);
 router.get('/get-profile', authController.getProfile);
+router.post('/update-username', authController.updateUsername);
 
 // Google OAuth
 router.get('/google', authController.googleSignIn);
