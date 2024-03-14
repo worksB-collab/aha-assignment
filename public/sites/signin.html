@@ -1,7 +1,31 @@
-<form action="/auth/signin" method="post">
-  <input name="email" required type="email">
-  <input name="password" required type="password">
-  <button type="submit">Login</button>
-</form>
-<a href="/auth/google">Login with Google</a>
-<a href="/signup">Sign Up</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign In</title>
+  <link href="../stylesheets/style.css" rel="stylesheet">
+</head>
+<body>
+<h2>Sign In</h2>
+<div class="field-container">
+  <form action="/auth/signin" method="post">
+    <div class="field">
+      <label>email</label>
+      <input name="email" required type="email">
+    </div>
+    <div class="field">
+      <label>password</label>
+      <input name="password" required type="password">
+    </div>
+    <button type="submit">Login</button>
+  </form>
+</div>
+
+<div class="btn-container">
+  <a href="/auth/google">Login with Google</a>
+  <a href="/signup">Sign Up</a>
+</div>
+</body>
+</html>
+
+
