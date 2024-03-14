@@ -14,8 +14,9 @@ p {
 
 button {
     height: fit-content;
+    width: fit-content;
     padding: 5px 10px;
-    margin: 5px;
+    margin: 10px auto;
     border: none;
     border-radius: 3px;
     box-shadow: 2px 1px 1px lightgray;
@@ -26,26 +27,23 @@ button:hover {
     transform: translateY(-3px);
 }
 
-.field-container {
-    display: flex;
-    flex-direction: row;
+.response-data {
+    color: #005a8b;
 }
 
-.field-container form {
+.field-container {
     display: flex;
-    flex-direction: row;
-    align-items: flex-end;
+    flex-direction: column;
+    width: 300px;
+    justify-content: center;
 }
+
 
 .field {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
     margin: 5px;
-    align-items: baseline;
-}
-
-.response-data {
-    color: #005a8b;
 }
 
 .btn-container {
