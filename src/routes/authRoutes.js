@@ -11,7 +11,8 @@ router.get('/get-profile', authController.getProfile);
 router.post('/update-username', authController.updateUsername);
 
 // Google OAuth
-router.get('/google', authController.googleSignIn);
-router.get('/google/callback', authController.googleCallback);
+router.get('/google', authController.googleSignIn, authController.onGoogleSignInSuccessful);
+router.get('/google/callback', authController.googleCallback, authController.redirectGoogleUserToDashboard);
+router.get('/google/logout', authController.googleLogout);
 
 module.exports = router;

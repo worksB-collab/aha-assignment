@@ -1,13 +1,14 @@
 const userService = require('../services/userService');
 const {sendVerificationEmail} = require("./emailService");
 const {validatePassword, verifyPassword} = require("../utils/passwordUtil");
+const jwt = require("jsonwebtoken");
 
 const signUp = async (name, email, password, repeatedPassword) => {
   if (!validatePassword(password, repeatedPassword)) {
     throw new Error("password invalid");
   }
-  const token = await userService.createUser(name, email, password);
-  await sendVerificationEmail(email, token);
+  const verificationToken = await userService.createUser(name, email, password);
+  await sendVerificationEmail(email, verificationToken);
 };
 
 const resendVerificationEmail = async (email) => {
@@ -16,85 +17,59 @@ const resendVerificationEmail = async (email) => {
 }
 
 const verifyToken = async (token) => {
-  const user = await userService.findUserByToken(token);
-  user.verified = true;
-  await userService.save(user);
-  return user;
+  await userService.verifyToken(token);
 }
 
 const signIn = async (email, password) => {
   const user = await userService.findUserByEmail(email);
-  if (!await verifyPassword(password, user.password)) {
+  if (user.googleId) {
+    throw new Error("this account was signed up with google");
+  }
+  if (!user || !await verifyPassword(password, user.password)) {
     throw new Error("email or password incorrect");
   }
+  await userService.signIn(user);
 };
 
-module.exports = {
-  signUp, resendVerificationEmail, verifyToken, signIn
+const createGoogleUser = async (accessToken, refreshToken, profile, cb) => {
+  const email = profile.emails[0].value;
+  try {
+    let user = await userService.findUserByEmail(email);
+    if (!user) {
+      user = await userService.createGoogleUser(profile.id, profile.displayName, email);
+    }
+    const userData = {
+      googleId: profile.id,
+      name: profile.displayName,
+      email: profile.emails[0].value,
+      token: jwt.sign({email: user.email}, process.env.JWT_SECRET, {expiresIn: '30d'})
+    };
+    cb(null, userData);
+  } catch (error) {
+    return cb(error, null);
+  }
+}
+
+const getProfile = async (auth, email) => {
+  this.authenticate(auth);
+  const user = await userService.findUserByEmail(email);
+  return {
+    name: user.name,
+    email: user.email
+  };
+}
+
+const updateUsername = async (auth, email, newName) => {
+  this.authenticate(auth);
+  await userService.updateUsername(email, newName);
+}
+
+const authenticate = (auth) => {
+  const token = auth ? auth.split('Bearer ')[1] : null;
+  jwt.verify(token, process.env.JWT_SECRET);
 }
 
 
-//---
-// const LocalStrategy = require('passport-local').Strategy;
-// const GoogleStrategy = require('passport-google-oauth20').Strategy;
-// const bcrypt = require('bcrypt');
-//
-// // Your User model
-// const {getUser} = require('../services/userService');
-// const {validatePassword} = require("../utils/passwordUtil");
-// const {sendVerificationEmail} = require("./emailService");
-//
-// module.exports = function(passport) {
-//   passport.use(new LocalStrategy({ usernameField: 'email' },
-//     async (email, password, done) => {
-//       // Match user
-//       const user = await getUser({ email: email });
-//       if (!user) {
-//         return done(null, false, { message: 'That email is not registered' });
-//       }
-//
-//       // Match password
-//       try {
-//         if (await bcrypt.compare(password, user.password)) {
-//           return done(null, user);
-//         } else {
-//           return done(null, false, { message: 'Password incorrect' });
-//         }
-//       } catch (e) {
-//         return done(e);
-//       }
-//     }
-//   ));
-//
-//   // Google OAuth Strategy
-//   passport.use(new GoogleStrategy({
-//       clientID: process.env.GOOGLE_CLIENT_ID,
-//       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-//       callbackURL: "/auth/google/callback"
-//     },
-//     async (accessToken, refreshToken, profile, done) => {
-//       // Check if user already exists in your db
-//       try {
-//         let user = await getUser({ googleId: profile.id });
-//         if (user) {
-//           return done(null, user);
-//         } else {
-//           // if not, create user in your db
-//           user = await createUser({
-//             googleId: profile.id,
-//             email: profile.emails[0].value,
-//             name: profile.displayName
-//           });
-//           return done(null, user);
-//         }
-//       } catch (err) {
-//         return done(err);
-//       }
-//     }
-//   ));
-//
-//   passport.serializeUser((user, done) => done(null, user.id));
-//   passport.deserializeUser((id, done) => {
-//     User.findById(id, (err, user) => done(err, user));
-//   });
-// };
+module.exports = {
+  signUp, resendVerificationEmail, verifyToken, signIn, createGoogleUser, getProfile, updateUsername, authenticate
+}

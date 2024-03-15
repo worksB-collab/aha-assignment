@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -5,11 +7,22 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const PORT = process.env.PORT || 3000;
 const authRouter = require('./src/routes/authRoutes');
 const app = express();
+const session = require('express-session');
+const passport = require("passport");
+
+app.use(session({
+  secret: 'aha',
+  resave: false,
+  saveUninitialized: true,
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+require('./src/config/passport-setup');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -54,7 +67,18 @@ app.get('/dashboard', (req, res, next) => {
       return res.redirect('/signin');
     }
   } catch (error) {
-    // If authentication fails, redirect to sign-in page
+    console.log('dashboard error', error);
+    return res.redirect('/signin');
+  }
+});
+
+app.get('/dashboard/google', (req, res, next) => {
+  try {
+    const {token} = req.session.passport.user;
+    jwt.verify(token, process.env.JWT_SECRET);
+    return directPage(`verifiedDashboard.html`)(req, res, next);
+  } catch (error) {
+    console.log('dashboard google error', error);
     return res.redirect('/signin');
   }
 });
@@ -75,12 +99,6 @@ app.use(async (req, res, next) => {
   }
 });
 
-//
-// app.post('/login', passport.authenticate('local', {
-//   successRedirect: '/',
-//   failureRedirect: '/login',
-//   failureFlash: true
-// }));
 
 const swaggerOptions = {
   definition: {

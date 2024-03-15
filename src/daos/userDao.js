@@ -25,37 +25,61 @@ const findUserByToken = async (token) => {
 }
 
 const createUser = async (name, email, password, token) => {
-  await createTableIfNotExist();
+  const now = new Date();
   const result = await pool.query(
-    'INSERT INTO users (name, email, password, token, verified) VALUES ($1, $2, $3, $4, false) RETURNING *',
-    [name, email, password, token]
+    'INSERT INTO users (name, email, password, token, verified, createTime, lastLoginTime, loginCount) VALUES ($1, $2, $3, $4, false, $5, $6, $7) RETURNING *',
+    [name, email, password, token, now, now, 1]
   );
   return result.rows[0];
 };
 
-const createTableIfNotExist = async () => {
-  await pool.query(`
-      CREATE TABLE IF NOT EXISTS users
-      (
-          id       SERIAL PRIMARY KEY,
-          googleId VARCHAR(255),
-          name     VARCHAR(255)        NOT NULL,
-          email    VARCHAR(255) UNIQUE NOT NULL,
-          password VARCHAR(255)        NOT NULL,
-          token    VARCHAR(255)        NOT NULL,
-          verified BOOLEAN             NOT NULL
-      )
-  `);
-};
+const createGoogleUser = async (googleId, name, email, token) => {
+  const now = new Date();
+  const result = await pool.query(
+    'INSERT INTO users (googleId, name, email, token, verified, createTime, lastLoginTime, loginCount) VALUES ($1, $2, $3, $4, true, $5, $6, $7) RETURNING *',
+    [googleId, name, email, token, now, now, 1]
+  );
+  return result.rows[0];
+}
+
+const login = async (id, count) => {
+  const now = new Date();
+  await pool.query(
+    'UPDATE users SET lastLoginTime = $2, loginCount = $3 WHERE id = $1',
+    [id, now, count]
+  );
+}
 
 const save = async (user) => {
-  const {email, name, password, token, verified} = user;
+  const {id, name, password, token, verified} = user;
   await pool.query(
-    'UPDATE users SET name = $2, password = $3, token = $4, verified = $5 WHERE email = $1',
-    [email, name, password, token, verified]
+    'UPDATE users SET name = $2, password = $3, token = $4, verified = $5 WHERE id = $1',
+    [id, name, password, token, verified]
+  );
+}
+
+const updateUsername = async (email, name) => {
+  await pool.query(
+    'UPDATE users SET name = $2 WHERE email = $1',
+    [email, name]
+  );
+}
+
+const verifyToken = async (token) => {
+  await pool.query(
+    'UPDATE users SET verified = $2 WHERE token = $1',
+    [token, true]
   );
 }
 
 module.exports = {
-  findUserByEmail, findUserByGoogleId, findUserByToken, createUser, save
+  findUserByEmail,
+  findUserByGoogleId,
+  findUserByToken,
+  createUser,
+  createGoogleUser,
+  login,
+  save,
+  updateUsername,
+  verifyToken
 };

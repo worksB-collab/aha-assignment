@@ -16,6 +16,11 @@ const createUser = async (name, email, password) => {
   return token;
 };
 
+const createGoogleUser = async (googleId, name, email) => {
+  const token = uuidv4()
+  return await userDao.createGoogleUser(googleId, name, email, token);
+};
+
 const findUserByToken = (token) => {
   return userDao.findUserByToken(token);
 }
@@ -25,9 +30,17 @@ const save = async (user) => {
 }
 
 const signIn = async (user) => {
-  await userDao.save(user);
+  await userDao.login(user.id, user.loginCount);
+}
+
+const updateUsername = async (email, name) => {
+  await userDao.updateUsername(email, name);
+}
+
+const verifyToken = async (token) => {
+  await userDao.verifyToken(token);
 }
 
 module.exports = {
-  findUserByEmail, createUser, findUserByToken, save
+  findUserByEmail, createUser, createGoogleUser, findUserByToken, save, signIn, updateUsername, verifyToken
 };
