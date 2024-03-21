@@ -1,5 +1,5 @@
 const userDao = require('../daos/userDao');
-const {encryptPassword} = require("../utils/passwordUtil");
+const {encryptPassword, verifyPassword, validatePassword} = require("../utils/passwordUtil");
 const {v4: uuidv4} = require('uuid');
 
 const findUserByEmail = async (email) => {
@@ -41,6 +41,22 @@ const verifyToken = async (token) => {
   await userDao.verifyToken(token);
 }
 
+const resetPassword = async (email, oldPassword, newPassword) => {
+  const user = findUserByToken(email);
+  if (!user || !await verifyPassword(oldPassword, user.password)) {
+    throw new Error("email or old password incorrect");
+  }
+  await userDao.resetPassword(email, encryptPassword(newPassword));
+}
+
 module.exports = {
-  findUserByEmail, createUser, createGoogleUser, findUserByToken, save, signIn, updateUsername, verifyToken
+  findUserByEmail,
+  createUser,
+  createGoogleUser,
+  findUserByToken,
+  save,
+  signIn,
+  updateUsername,
+  verifyToken,
+  resetPassword
 };

@@ -2,10 +2,14 @@ const bcrypt = require('bcrypt');
 
 const validatePassword = (password, repeatedPassword) => {
   if (password !== repeatedPassword) {
-    return false;
+    throw new Error("repeated password invalid");
   }
   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])(.{8,})$/;
-  return regex.test(password);
+  const pass = regex.test(password);
+
+  if (!pass) {
+    throw new Error("password invalid");
+  }
 }
 const encryptPassword = async (password) => {
   try {

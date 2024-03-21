@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     nameField.innerText = data.name;
     emailField.innerText = data.email;
   } else {
-    console.error('Failed to update name', data.message);
+    console.error('Failed to load profile', data.message);
+    window.location.href = '/signin';
   }
 });
 
@@ -41,6 +42,7 @@ const updateName = async (newName) => {
     }
   } catch (error) {
     console.error('Error updating name', error);
+    window.location.href = '/signin';
   }
 }
 

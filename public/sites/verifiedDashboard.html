@@ -11,5 +11,46 @@
   <a href="/profile">Profile</a>
   <a href="/auth/logout">Logout</a>
 </div>
+<div>
+  <h2>Profile</h2>
+  <div class="field-container">
+    <div class="field">
+      <label>Name:</label>
+      <p class="response-data" id="name"></p>
+    </div>
+    <div class="field">
+      <label>Email:</label>
+      <p class="response-data" id="email"></p>
+    </div>
+
+    <div class="field-container">
+      <div class="field">
+        <label for="new-name">Reset Name</label>
+        <input id="new-name" placeholder="Enter new name" required type="text"/>
+      </div>
+    </div>
+    <button id="apply-name-btn">Apply Name</button>
+  </div>
+  <div class="field-container">
+    <div class="field">
+      <label for="new-name">old password</label>
+      <input id="old-password" minlength="8" required type="password">
+    </div>
+    <div class="field">
+      <label for="new-password">new password</label>
+      <input id="new-password" minlength="8" required type="password">
+    </div>
+    <div class="field">
+      <label for="repeat-password">repeat password</label>
+      <input id="repeat-password" minlength="8" required type="password">
+    </div>
+    <p id="status"></p>
+    <button id="reset-password-btn">Reset Password</button>
+  </div>
+
+
+</div>
+<script src="../javascripts/resetPassword.js" type="module"></script>
+<script src="../javascripts/getProfile.js" type="module"></script>
 </body>
 </html>

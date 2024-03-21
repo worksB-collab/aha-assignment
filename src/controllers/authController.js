@@ -5,7 +5,7 @@ const signUp = async (req, res) => {
   try {
     const {name, email, password, repeatedPassword} = req.body;
     await authService.signUp(name, email, password, repeatedPassword);
-    res.cookie('email', email, {sameSite: 'strict', maxAge: 30 * 24 * 60 * 60 * 1000});
+    res.cookie('email', email, {maxAge: 30 * 24 * 60 * 60 * 1000});
     res.redirect('/dashboard');
   } catch (error) {
     res.status(500).send({message: error.message});
@@ -16,7 +16,7 @@ const verifyEmail = async (req, res) => {
   const {email, verificationToken} = req.query;
   await authService.verifyToken(verificationToken);
   const jwtToken = jwt.sign({email: email}, process.env.JWT_SECRET, {expiresIn: '30d'});
-  res.cookie('token', jwtToken, {sameSite: 'strict', maxAge: 30 * 24 * 60 * 60 * 1000});
+  res.cookie('token', jwtToken, {maxAge: 30 * 24 * 60 * 60 * 1000});
   res.redirect('/dashboard');
 }
 
@@ -64,8 +64,9 @@ const redirectGoogleUserToDashboard = (req, res) => {
 
 const logout = (req, res) => {
   res.clearCookie('token', {
-    httpOnly: true,
-    secure: true, // Match the settings from when you set the cookie
+    sameSite: 'strict',
+  });
+  res.clearCookie('email', {
     sameSite: 'strict',
   });
   res.redirect('/signin');
@@ -98,6 +99,17 @@ const updateUsername = async (req, res) => {
   }
 }
 
+const resetPassword = async (req, res) => {
+  const auth = req.headers.authorization;
+  const {email, oldPassword, newPassword, repeatPassword} = req.body;
+  try {
+    await authService.resetPassword(auth, email, oldPassword, newPassword, repeatPassword);
+    res.status(200).send({});
+  } catch (error) {
+    res.status(400).send({message: error.message});
+  }
+}
+
 
 module.exports = {
   signUp,
@@ -111,5 +123,6 @@ module.exports = {
   googleLogout,
   getProfile,
   updateUsername,
-  redirectGoogleUserToDashboard
+  redirectGoogleUserToDashboard,
+  resetPassword,
 }

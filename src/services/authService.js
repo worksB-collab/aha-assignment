@@ -4,9 +4,7 @@ const {validatePassword, verifyPassword} = require("../utils/passwordUtil");
 const jwt = require("jsonwebtoken");
 
 const signUp = async (name, email, password, repeatedPassword) => {
-  if (!validatePassword(password, repeatedPassword)) {
-    throw new Error("password invalid");
-  }
+  validatePassword(password, repeatedPassword);
   const verificationToken = await userService.createUser(name, email, password);
   await sendVerificationEmail(email, verificationToken);
 };
@@ -51,7 +49,7 @@ const createGoogleUser = async (accessToken, refreshToken, profile, cb) => {
 }
 
 const getProfile = async (auth, email) => {
-  this.authenticate(auth);
+  _authenticate(auth);
   const user = await userService.findUserByEmail(email);
   return {
     name: user.name,
@@ -60,16 +58,22 @@ const getProfile = async (auth, email) => {
 }
 
 const updateUsername = async (auth, email, newName) => {
-  this.authenticate(auth);
+  _authenticate(auth);
   await userService.updateUsername(email, newName);
 }
 
-const authenticate = (auth) => {
+const _authenticate = (auth) => {
   const token = auth ? auth.split('Bearer ')[1] : null;
   jwt.verify(token, process.env.JWT_SECRET);
 }
 
+const resetPassword = async (auth, email, oldPassword, newPassword, repeatPassword) => {
+  _authenticate(auth);
+  validatePassword(newPassword, repeatPassword)
+  await userService.resetPassword(email, oldPassword, newPassword);
+}
+
 
 module.exports = {
-  signUp, resendVerificationEmail, verifyToken, signIn, createGoogleUser, getProfile, updateUsername, authenticate
+  signUp, resendVerificationEmail, verifyToken, signIn, createGoogleUser, getProfile, updateUsername, resetPassword
 }

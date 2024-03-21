@@ -27,8 +27,8 @@ const findUserByToken = async (token) => {
 const createUser = async (name, email, password, token) => {
   const now = new Date();
   const result = await pool.query(
-    'INSERT INTO users (name, email, password, token, verified, createTime, lastLoginTime, loginCount) VALUES ($1, $2, $3, $4, false, $5, $6, $7) RETURNING *',
-    [name, email, password, token, now, now, 1]
+    'INSERT INTO users ("name", "email", "password", "token", "verified", "createTime", "lastLoginTime", "loginCount") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+    [name, email, password, token, false, now, now, 1]
   );
   return result.rows[0];
 };
@@ -36,8 +36,8 @@ const createUser = async (name, email, password, token) => {
 const createGoogleUser = async (googleId, name, email, token) => {
   const now = new Date();
   const result = await pool.query(
-    'INSERT INTO users (googleId, name, email, token, verified, createTime, lastLoginTime, loginCount) VALUES ($1, $2, $3, $4, true, $5, $6, $7) RETURNING *',
-    [googleId, name, email, token, now, now, 1]
+    'INSERT INTO users ("googleId", "name", "email", "token", "verified", "createTime", "lastLoginTime", "loginCount") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+    [googleId, name, email, token, true, now, now, 1]
   );
   return result.rows[0];
 }
@@ -45,7 +45,7 @@ const createGoogleUser = async (googleId, name, email, token) => {
 const login = async (id, count) => {
   const now = new Date();
   await pool.query(
-    'UPDATE users SET lastLoginTime = $2, loginCount = $3 WHERE id = $1',
+    'UPDATE users SET "lastLoginTime" = $2, "loginCount" = $3 WHERE id = $1',
     [id, now, count]
   );
 }
@@ -72,6 +72,13 @@ const verifyToken = async (token) => {
   );
 }
 
+const resetPassword = async (email, password) => {
+  await pool.query(
+    'UPDATE users SET password = $2 WHERE email = $1',
+    [email, password]
+  );
+}
+
 module.exports = {
   findUserByEmail,
   findUserByGoogleId,
@@ -81,5 +88,6 @@ module.exports = {
   login,
   save,
   updateUsername,
-  verifyToken
+  verifyToken,
+  resetPassword,
 };
