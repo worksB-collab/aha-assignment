@@ -110,6 +110,15 @@ const resetPassword = async (req, res) => {
   }
 }
 
+const getAllUsers = async (req, res) => {
+  const auth = req.headers.authorization;
+  try {
+    const userList = await authService.getAllUsers(auth);
+    res.status(200).send(userList);
+  } catch (error) {
+    res.status(400).send({message: error.message});
+  }
+}
 
 module.exports = {
   signUp,
@@ -125,4 +134,5 @@ module.exports = {
   updateUsername,
   redirectGoogleUserToDashboard,
   resetPassword,
+  getAllUsers,
 }

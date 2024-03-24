@@ -1,6 +1,11 @@
 import {getCookie} from "./utils.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
+  await getProfile();
+  await getAllUsers();
+});
+
+const getProfile = async () => {
   const token = getCookie('token');
   const email = getCookie('email');
   const res = await fetch(`/auth/get-profile?email=${email}`, {
@@ -20,7 +25,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Failed to load profile', data.message);
     window.location.href = '/signin';
   }
-});
+}
+
+const getAllUsers = async () => {
+  const token = getCookie('token');
+  const res = await fetch(`/auth/get-all-users`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+  });
+  const data = await res.json();
+  if (res.status === 200) {
+    const html = data.map((user) => {
+      return `
+        <div>
+          <p>${user.name}</p>
+          <p>${user.createTime}</p>
+          <p>${user.loginCount}</p>
+          <p>${user.lastLoginTime}</p>
+        </div>
+      `;
+    });
+    const userList = document.getElementById('user-list');
+    userList.innerHTML = html;
+  } else {
+    console.error('Failed to load profile', data.message);
+    // window.location.href = '/signin';
+  }
+}
 
 const updateName = async (newName) => {
   const token = getCookie('token');

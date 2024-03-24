@@ -30,7 +30,7 @@ const save = async (user) => {
 }
 
 const signIn = async (user) => {
-  await userDao.login(user.id, user.loginCount);
+  await userDao.login(user.id, user.loginCount + 1);
 }
 
 const updateUsername = async (email, name) => {
@@ -49,6 +49,10 @@ const resetPassword = async (email, oldPassword, newPassword) => {
   await userDao.resetPassword(email, await encryptPassword(newPassword));
 }
 
+const getAllUsers = async () => {
+  return await userDao.getAllUsers();
+}
+
 module.exports = {
   findUserByEmail,
   createUser,
@@ -58,5 +62,6 @@ module.exports = {
   signIn,
   updateUsername,
   verifyToken,
-  resetPassword
+  resetPassword,
+  getAllUsers,
 };

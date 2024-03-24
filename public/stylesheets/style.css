@@ -54,5 +54,6 @@ button:hover {
 }
 
 .status {
-    color: red
+    color: red;
+    text-align: end;
 }

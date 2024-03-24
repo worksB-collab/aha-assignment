@@ -73,7 +73,28 @@ const resetPassword = async (auth, email, oldPassword, newPassword, repeatPasswo
   await userService.resetPassword(email, oldPassword, newPassword);
 }
 
+const getAllUsers = async (auth) => {
+  _authenticate(auth);
+  const userList = await userService.getAllUsers();
+  return userList.map(user => {
+    return {
+      name: user.name,
+      createTime: user.createTime,
+      loginCount: user.loginCount,
+      lastLoginTime: user.lastLoginTime,
+    }
+  });
+}
+
 
 module.exports = {
-  signUp, resendVerificationEmail, verifyToken, signIn, createGoogleUser, getProfile, updateUsername, resetPassword
+  signUp,
+  resendVerificationEmail,
+  verifyToken,
+  signIn,
+  createGoogleUser,
+  getProfile,
+  updateUsername,
+  resetPassword,
+  getAllUsers,
 }
