@@ -46,11 +46,55 @@ const updateName = async (newName) => {
   }
 }
 
+const resetPassword = async (oldPassword, newPassword, repeatPassword) => {
+  const token = getCookie('token');
+  const email = getCookie('email');
+  const statusText = document.getElementById('status');
+  const oldPasswordField = document.getElementById('old-password');
+  const newPasswordField = document.getElementById('new-password');
+  const repeatPasswordField = document.getElementById('repeat-password');
+  statusText.innerText = '';
+
+  try {
+    const res = await fetch(`/auth/reset-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({email, oldPassword, newPassword, repeatPassword})
+    });
+    const data = await res.json();
+    if (res.status === 200) {
+      statusText.innerText = 'updated!';
+      oldPasswordField.value = '';
+      newPasswordField.value = '';
+      repeatPasswordField.value = '';
+
+    } else {
+      console.error('Failed to update password', data.message);
+      statusText.innerText = data.message;
+    }
+  } catch (error) {
+    console.error('Error updating name', error);
+    window.location.href = '/signin';
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('apply-name-btn').addEventListener('click', async () => {
     const newName = document.getElementById('new-name').value;
     if (newName) {
       await updateName(newName);
     }
+  });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('reset-password-btn').addEventListener('click', async () => {
+    const oldPassword = document.getElementById('old-password').value;
+    const newPassword = document.getElementById('new-password').value;
+    const repeatPassword = document.getElementById('repeat-password').value;
+    await resetPassword(oldPassword, newPassword, repeatPassword);
   });
 });

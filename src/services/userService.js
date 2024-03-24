@@ -42,11 +42,11 @@ const verifyToken = async (token) => {
 }
 
 const resetPassword = async (email, oldPassword, newPassword) => {
-  const user = findUserByToken(email);
+  const user = await findUserByEmail(email);
   if (!user || !await verifyPassword(oldPassword, user.password)) {
     throw new Error("email or old password incorrect");
   }
-  await userDao.resetPassword(email, encryptPassword(newPassword));
+  await userDao.resetPassword(email, await encryptPassword(newPassword));
 }
 
 module.exports = {

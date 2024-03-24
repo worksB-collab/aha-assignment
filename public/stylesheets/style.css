@@ -52,3 +52,7 @@ button:hover {
     align-items: center;
     margin-top: 20px;
 }
+
+.status {
+    color: red
+}
