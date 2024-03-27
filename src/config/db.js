@@ -19,11 +19,22 @@ const pool = new Pool({
           "email"         VARCHAR(255) UNIQUE NOT NULL,
           "password"      VARCHAR(255),
           "createTime"    timestamp           NOT NULL,
-          "lastLoginTime" timestamp           NOT NULL,
           "token"         VARCHAR(255)        NOT NULL,
-          "loginCount"    INT                 NOT NULL,
           "verified"      BOOLEAN             NOT NULL
-
+      )
+  `);
+})();
+(async () => {
+  await pool.query(`
+      CREATE TABLE IF NOT EXISTS user_log
+      (
+          "id"            SERIAL PRIMARY KEY,
+          "userId"        INTEGER NOT NULL,
+          "loginTime"     TIMESTAMP NOT NULL,
+          CONSTRAINT fk_user
+              FOREIGN KEY ("userId")
+                  REFERENCES users("id")
+                  ON DELETE CASCADE
       )
   `);
 })();

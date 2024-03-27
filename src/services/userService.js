@@ -29,8 +29,8 @@ const save = async (user) => {
   await userDao.save(user);
 }
 
-const signIn = async (user) => {
-  await userDao.login(user.id, user.loginCount + 1);
+const signIn = async (userId) => {
+  await userDao.login(userId);
 }
 
 const updateUsername = async (email, name) => {
@@ -49,8 +49,19 @@ const resetPassword = async (email, oldPassword, newPassword) => {
   await userDao.resetPassword(email, await encryptPassword(newPassword));
 }
 
-const getAllUsers = async () => {
-  return await userDao.getAllUsers();
+const getAllUsersWithLoginDetail = async () => {
+  return await userDao.getAllUsersWithLoginDetail();
+}
+
+const getStatistics = async () => {
+  const totalNumSignUpObj = await userDao.getAllUserCount();
+  const activeSessionNumberTodayObj = await userDao.getActiveSessionNumberToday();
+  const avgNumActiveSevenDaysRollingObj = await userDao.getAvgNumActiveSevenDaysRolling();
+   return {
+     totalNumSignUp: parseInt(totalNumSignUpObj.totalNumSignUp, 10),
+     activeSessionNumberToday: parseInt(activeSessionNumberTodayObj.activeSessionNumberToday, 10),
+     avgNumActiveSevenDaysRolling: parseInt(avgNumActiveSevenDaysRollingObj.avgNumActiveSevenDaysRolling, 10),
+   }
 }
 
 module.exports = {
@@ -63,5 +74,6 @@ module.exports = {
   updateUsername,
   verifyToken,
   resetPassword,
-  getAllUsers,
+  getAllUsersWithLoginDetail,
+  getStatistics,
 };

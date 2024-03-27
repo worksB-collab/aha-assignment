@@ -69,6 +69,9 @@ const logout = (req, res) => {
   res.clearCookie('email', {
     sameSite: 'strict',
   });
+  res.clearCookie('googleId', {
+    sameSite: 'strict',
+  });
   res.redirect('/signin');
 }
 
@@ -120,6 +123,16 @@ const getAllUsers = async (req, res) => {
   }
 }
 
+const getStatistics = async (req, res) => {
+  const auth = req.headers.authorization;
+  try {
+    const statistics = await authService.getStatistics(auth);
+    res.status(200).send(statistics);
+  } catch (error) {
+    res.status(400).send({message: error.message});
+  }
+}
+
 module.exports = {
   signUp,
   verifyEmail,
@@ -135,4 +148,5 @@ module.exports = {
   redirectGoogleUserToDashboard,
   resetPassword,
   getAllUsers,
+  getStatistics,
 }

@@ -11,6 +11,7 @@ router.get('/get-profile', authController.getProfile);
 router.post('/update-username', authController.updateUsername);
 router.post('/reset-password', authController.resetPassword);
 router.get('/get-all-users', authController.getAllUsers);
+router.get('/get-statistics', authController.getStatistics);
 
 // Google OAuth
 router.get('/google', authController.googleSignIn, authController.onGoogleSignInSuccessful);

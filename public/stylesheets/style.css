@@ -57,3 +57,22 @@ button:hover {
     color: red;
     text-align: end;
 }
+
+.card {
+    padding: 5px 20px;
+    margin: 5px;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+}
+
+.card-field {
+    margin: 0;
+}
+
+.dashboard-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-around;
+}

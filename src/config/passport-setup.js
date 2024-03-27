@@ -8,7 +8,7 @@ passport.use(new GoogleStrategy({
     callbackURL: '/auth/google/callback'
   },
   async (accessToken, refreshToken, profile, cb) => {
-    return authService.createGoogleUser(accessToken, refreshToken, profile, cb);
+    return authService.createOrSignInGoogleUser(accessToken, refreshToken, profile, cb);
   }
 ));
 

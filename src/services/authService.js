@@ -2,6 +2,7 @@ const userService = require('../services/userService');
 const {sendVerificationEmail} = require("./emailService");
 const {validatePassword, verifyPassword} = require("../utils/passwordUtil");
 const jwt = require("jsonwebtoken");
+const {format} = require("../utils/dateTimeUtil");
 
 const signUp = async (name, email, password, repeatedPassword) => {
   validatePassword(password, repeatedPassword);
@@ -26,16 +27,17 @@ const signIn = async (email, password) => {
   if (!user || !await verifyPassword(password, user.password)) {
     throw new Error("email or password incorrect");
   }
-  await userService.signIn(user);
+  await userService.signIn(user.id);
 };
 
-const createGoogleUser = async (accessToken, refreshToken, profile, cb) => {
+const createOrSignInGoogleUser = async (accessToken, refreshToken, profile, cb) => {
   const email = profile.emails[0].value;
   try {
     let user = await userService.findUserByEmail(email);
     if (!user) {
       user = await userService.createGoogleUser(profile.id, profile.displayName, email);
     }
+    await userService.signIn(user.id);
     const userData = {
       googleId: profile.id,
       name: profile.displayName,
@@ -75,26 +77,31 @@ const resetPassword = async (auth, email, oldPassword, newPassword, repeatPasswo
 
 const getAllUsers = async (auth) => {
   _authenticate(auth);
-  const userList = await userService.getAllUsers();
+  const userList = await userService.getAllUsersWithLoginDetail();
   return userList.map(user => {
     return {
       name: user.name,
-      createTime: user.createTime,
+      createTime: format(user.createTime),
       loginCount: user.loginCount,
-      lastLoginTime: user.lastLoginTime,
+      lastLoginTime: format(user.lastLoginTime),
     }
   });
 }
 
+const getStatistics = async (auth) => {
+  _authenticate(auth);
+  return await userService.getStatistics();
+}
 
 module.exports = {
   signUp,
   resendVerificationEmail,
   verifyToken,
   signIn,
-  createGoogleUser,
+  createOrSignInGoogleUser,
   getProfile,
   updateUsername,
   resetPassword,
   getAllUsers,
+  getStatistics,
 }

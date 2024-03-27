@@ -3,6 +3,7 @@ import {getCookie} from "./utils.js";
 document.addEventListener('DOMContentLoaded', async () => {
   await getProfile();
   await getAllUsers();
+  await getStatistics();
 });
 
 const getProfile = async () => {
@@ -38,20 +39,55 @@ const getAllUsers = async () => {
   });
   const data = await res.json();
   if (res.status === 200) {
-    const html = data.map((user) => {
-      return `
-        <div>
-          <p>${user.name}</p>
-          <p>${user.createTime}</p>
-          <p>${user.loginCount}</p>
-          <p>${user.lastLoginTime}</p>
+    const html = data.reduce((acc, user) => {
+      return acc + `
+        <div class="field-container card">
+          <div class="field card-field">
+            <label>Name:</label>
+            <p>${user.name}</p>
+          </div>
+          <div class="field card-field">
+            <label>Create time:</label>
+            <p>${user.createTime}</p>
+          </div>
+          <div class="field card-field">
+            <label>Login count:</label>
+            <p>${user.loginCount}</p>
+          </div>
+          <div class="field card-field">
+            <label>Last login time:</label>
+            <p>${user.lastLoginTime}</p>
+          </div>
         </div>
       `;
-    });
+    }, '');
     const userList = document.getElementById('user-list');
     userList.innerHTML = html;
   } else {
-    console.error('Failed to load profile', data.message);
+    console.error('Failed to load user list', data.message);
+    window.location.href = '/signin';
+  }
+}
+
+const getStatistics = async () => {
+  const token = getCookie('token');
+  const res = await fetch(`/auth/get-statistics`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+  });
+  const data = await res.json();
+  if (res.status === 200) {
+    const totalNumSignUp = document.getElementById('total-number-sign-up');
+    const activeSessionNumberToday = document.getElementById('active-session-number-today');
+    const avgNumActiveSevenDaysRolling = document.getElementById('avg-number-active-seven-days-rolling');
+    totalNumSignUp.innerText = data.totalNumSignUp;
+    activeSessionNumberToday.innerText = data.activeSessionNumberToday;
+    avgNumActiveSevenDaysRolling.innerText = data.avgNumActiveSevenDaysRolling;
+  } else {
+    console.error('Failed to load statistics', data.message);
     // window.location.href = '/signin';
   }
 }

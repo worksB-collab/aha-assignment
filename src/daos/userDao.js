@@ -27,8 +27,9 @@ const findUserByToken = async (token) => {
 const createUser = async (name, email, password, token) => {
   const now = new Date();
   const result = await pool.query(
-    'INSERT INTO users ("name", "email", "password", "token", "verified", "createTime", "lastLoginTime", "loginCount") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-    [name, email, password, token, false, now, now, 1]
+    `INSERT INTO users ("name", "email", "password", "token", "verified", "createTime") 
+     VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+    [name, email, password, token, false, now]
   );
   return result.rows[0];
 };
@@ -36,17 +37,18 @@ const createUser = async (name, email, password, token) => {
 const createGoogleUser = async (googleId, name, email, token) => {
   const now = new Date();
   const result = await pool.query(
-    'INSERT INTO users ("googleId", "name", "email", "token", "verified", "createTime", "lastLoginTime", "loginCount") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-    [googleId, name, email, token, true, now, now, 1]
+    `INSERT INTO users ("googleId", "name", "email", "token", "verified", "createTime") 
+     VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+    [googleId, name, email, token, true, now]
   );
   return result.rows[0];
 }
 
-const login = async (id, count) => {
+const login = async (userId) => {
   const now = new Date();
   await pool.query(
-    'UPDATE users SET "lastLoginTime" = $2, "loginCount" = $3 WHERE id = $1',
-    [id, now, count]
+    'INSERT INTO user_log ("userId", "loginTime") VALUES ($1, $2) RETURNING *',
+    [userId, now]
   );
 }
 
@@ -79,11 +81,40 @@ const resetPassword = async (email, password) => {
   );
 }
 
-const getAllUsers = async () => {
+const getAllUsersWithLoginDetail = async () => {
   const result = await pool.query(
-    'SELECT * FROM users'
+    `SELECT u."name", u."createTime", COUNT(l."userId") AS "loginCount", MAX(l."loginTime") AS "lastLoginTime" 
+     FROM users u left join user_log l ON u."id" = l."userId" GROUP BY u."id";`
   );
   return result.rows;
+}
+
+const getAllUserCount = async () => {
+  const result = await pool.query(
+    'SELECT COUNT(*) AS "totalNumSignUp" FROM users;'
+  );
+  return result.rows[0];
+}
+
+const getActiveSessionNumberToday = async () => {
+  const result = await pool.query(
+    `SELECT COUNT(*) AS "activeSessionNumberToday" 
+     FROM user_log WHERE "loginTime" >= CURRENT_DATE 
+                     AND "loginTime" < CURRENT_DATE + INTERVAL '1 day' ;`
+  );
+  return result.rows[0];
+}
+
+const getAvgNumActiveSevenDaysRolling = async () => {
+  const result = await pool.query(
+    `SELECT AVG(daily_active_users) AS "avgNumActiveSevenDaysRolling"
+     FROM (SELECT date_trunc('day', "loginTime") AS day,
+                  COUNT(DISTINCT "userId")       AS daily_active_users
+           FROM user_log
+           WHERE "loginTime" > CURRENT_DATE - INTERVAL '7 days'
+           GROUP BY day) AS daily_counts;`
+  );
+  return result.rows[0];
 }
 
 module.exports = {
@@ -97,5 +128,8 @@ module.exports = {
   updateUsername,
   verifyToken,
   resetPassword,
-  getAllUsers,
+  getAllUsersWithLoginDetail,
+  getAllUserCount,
+  getActiveSessionNumberToday,
+  getAvgNumActiveSevenDaysRolling,
 };
