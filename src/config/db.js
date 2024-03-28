@@ -1,12 +1,23 @@
 const {Pool} = require('pg');
 
+console.log('??process.env.PLATFORM_RELATIONSHIPS', process.env.PLATFORM_RELATIONSHIPS)
+// if (process.env.PLATFORM_RELATIONSHIPS) {
+// Decode the PLATFORM_RELATIONSHIPS variable
+const relationships = JSON.parse(Buffer.from(process.env.PLATFORM_RELATIONSHIPS, 'base64').toString());
+
+// Assuming the relationship is named 'database'
+const credentials = relationships.database[0];
+
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'postgres',
-  password: 'postgres',
-  port: 5432,
+  user: credentials.username,
+  host: credentials.host,
+  database: credentials.path,
+  password: credentials.password,
+  port: credentials.port,
 });
+
+// Your database operations...
+// }
 
 // create table if not exist
 (async () => {
