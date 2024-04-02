@@ -6,9 +6,6 @@ const findUserByEmail = async (email) => {
   return userDao.findUserByEmail(email);
 }
 
-const findUserByGoogleId = async (googleId) => {
-  return userDao.findUserByGoogleId(googleId);
-}
 const createUser = async (name, email, password) => {
   const encryptedPassword = await encryptPassword(password);
   const token = uuidv4()
@@ -54,13 +51,13 @@ const getAllUsersWithLoginDetail = async () => {
 }
 
 const getStatistics = async () => {
-  const totalNumSignUpObj = await userDao.getAllUserCount();
-  const activeSessionNumberTodayObj = await userDao.getActiveSessionNumberToday();
-  const avgNumActiveSevenDaysRollingObj = await userDao.getAvgNumActiveSevenDaysRolling();
+  const totalNumSignUp = await userDao.getAllUserCount();
+  const activeSessionNumberToday = await userDao.getActiveSessionNumberToday();
+  const avgNumActiveSevenDaysRolling = await userDao.getAvgNumActiveSevenDaysRolling();
    return {
-     totalNumSignUp: parseInt(totalNumSignUpObj.totalNumSignUp, 10),
-     activeSessionNumberToday: parseInt(activeSessionNumberTodayObj.activeSessionNumberToday, 10),
-     avgNumActiveSevenDaysRolling: parseInt(avgNumActiveSevenDaysRollingObj.avgNumActiveSevenDaysRolling, 10),
+     totalNumSignUp,
+     activeSessionNumberToday,
+     avgNumActiveSevenDaysRolling,
    }
 }
 

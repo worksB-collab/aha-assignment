@@ -1,4 +1,5 @@
-const format = (date) => {
+const format = (dateString) => {
+  const date = new Date(dateString);
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
   ];

@@ -21,11 +21,11 @@ const verifyToken = async (token) => {
 
 const signIn = async (email, password) => {
   const user = await userService.findUserByEmail(email);
-  if (user.googleId) {
-    throw new Error("this account was signed up with google");
-  }
   if (!user || !await verifyPassword(password, user.password)) {
     throw new Error("email or password incorrect");
+  }
+  if (user.googleId) {
+    throw new Error("this account was signed up with google");
   }
   await userService.signIn(user.id);
 };

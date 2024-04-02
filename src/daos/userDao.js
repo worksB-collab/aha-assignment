@@ -1,125 +1,212 @@
-const pool = require('../config/db');
+const {createClient} = require('@supabase/supabase-js');
+
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const findUserByEmail = async (email) => {
-  const result = await pool.query(
-    'SELECT * FROM users WHERE email = $1',
-    [email]
-  );
-  return result.rows[0];
-}
+  const {data, error} = await supabase
+    .from('users')
+    .select('*')
+    .eq('email', email)
+    .single();
 
-const findUserByGoogleId = async (googleId) => {
-  const result = await pool.query(
-    'SELECT * FROM users WHERE googleId = $1',
-    [googleId]
-  );
-  return result.rows[0];
-}
+  if (!data) {
+    return data;
+  }
+  if (error) {
+    throw new Error(error.details);
+  }
+
+  return data;
+};
 
 const findUserByToken = async (token) => {
-  const result = await pool.query(
-    'SELECT * FROM users WHERE token =($1)',
-    [token]
-  );
-  return result.rows[0];
-}
+  const {data, error} = await supabase
+    .from('users')
+    .select('*')
+    .eq('token', token)
+    .single();
+
+  if (!data) {
+    return data;
+  }
+  if (error) {
+    throw new Error(error.details);
+  }
+
+  return data;
+};
 
 const createUser = async (name, email, password, token) => {
-  const now = new Date();
-  const result = await pool.query(
-    `INSERT INTO users ("name", "email", "password", "token", "verified", "createTime") 
-     VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-    [name, email, password, token, false, now]
-  );
-  return result.rows[0];
+  const {data, error} = await supabase
+    .from('users')
+    .insert([{name, email, password, token, verified: false, createTime: new Date()}])
+    .single();
+
+  if (!data) {
+    return data;
+  }
+  if (error) {
+    throw new Error(error.details);
+  }
+
+  return data;
 };
 
 const createGoogleUser = async (googleId, name, email, token) => {
-  const now = new Date();
-  const result = await pool.query(
-    `INSERT INTO users ("googleId", "name", "email", "token", "verified", "createTime") 
-     VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-    [googleId, name, email, token, true, now]
-  );
-  return result.rows[0];
-}
+  const {data, error} = await supabase
+    .from('users')
+    .insert([{googleId, name, email, token, verified: true, createTime: new Date()}])
+    .single();
+
+  if (!data) {
+    return data;
+  }
+  if (error) {
+    throw new Error(error.details);
+  }
+
+  return data;
+};
 
 const login = async (userId) => {
-  const now = new Date();
-  await pool.query(
-    'INSERT INTO user_log ("userId", "loginTime") VALUES ($1, $2) RETURNING *',
-    [userId, now]
-  );
-}
+  const {data, error} = await supabase
+    .from('user_log')
+    .insert([{userId, loginTime: new Date()}])
+    .single();
+
+  if (!data) {
+    return data;
+  }
+  if (error) {
+    throw new Error(error.details);
+  }
+
+  return data;
+};
 
 const save = async (user) => {
   const {id, name, password, token, verified} = user;
-  await pool.query(
-    'UPDATE users SET name = $2, password = $3, token = $4, verified = $5 WHERE id = $1',
-    [id, name, password, token, verified]
-  );
-}
+  const {data, error} = await supabase
+    .from('users')
+    .update({name, password, token, verified})
+    .match({id});
+
+  if (!data) {
+    return data;
+  }
+  if (error) {
+    throw new Error(error.details);
+  }
+
+  return data;
+};
 
 const updateUsername = async (email, name) => {
-  await pool.query(
-    'UPDATE users SET name = $2 WHERE email = $1',
-    [email, name]
-  );
-}
+  const {data, error} = await supabase
+    .from('users')
+    .update({name})
+    .match({email});
+
+  if (!data) {
+    return data;
+  }
+  if (error) {
+    throw new Error(error.details);
+  }
+
+  return data;
+};
 
 const verifyToken = async (token) => {
-  await pool.query(
-    'UPDATE users SET verified = $2 WHERE token = $1',
-    [token, true]
-  );
-}
+  const {data, error} = await supabase
+    .from('users')
+    .update({verified: true})
+    .match({token});
+
+  if (!data) {
+    return data;
+  }
+  if (error) {
+    throw new Error(error.details);
+  }
+
+  return data;
+};
 
 const resetPassword = async (email, password) => {
-  await pool.query(
-    'UPDATE users SET password = $2 WHERE email = $1',
-    [email, password]
-  );
-}
+  const {data, error} = await supabase
+    .from('users')
+    .update({password})
+    .match({email});
+
+  if (!data) {
+    return data;
+  }
+  if (error) {
+    throw new Error(error.details);
+  }
+
+  return data;
+};
+
 
 const getAllUsersWithLoginDetail = async () => {
-  const result = await pool.query(
-    `SELECT u."name", u."createTime", COUNT(l."userId") AS "loginCount", MAX(l."loginTime") AS "lastLoginTime" 
-     FROM users u left join user_log l ON u."id" = l."userId" GROUP BY u."id";`
-  );
-  return result.rows;
-}
+  const {data, error} = await supabase
+    .rpc('get_all_users_with_login_detail');
+
+  if (error) {
+    console.error('Error:', error);
+    return;
+  }
+
+  return data;
+};
+
 
 const getAllUserCount = async () => {
-  const result = await pool.query(
-    'SELECT COUNT(*) AS "totalNumSignUp" FROM users;'
-  );
-  return result.rows[0];
-}
+  const {data, error} = await supabase
+    .from('users')
+    .select('id', {count: 'exact'});
+
+  if (!data) {
+    return data;
+  }
+  if (error) {
+    throw new Error(error.details);
+  }
+
+  return data.length;
+};
+
 
 const getActiveSessionNumberToday = async () => {
-  const result = await pool.query(
-    `SELECT COUNT(*) AS "activeSessionNumberToday" 
-     FROM user_log WHERE "loginTime" >= CURRENT_DATE 
-                     AND "loginTime" < CURRENT_DATE + INTERVAL '1 day' ;`
-  );
-  return result.rows[0];
+  const {data, error} = await supabase.rpc('get_active_session_number_today');
+
+  if (error) {
+    console.error('Error fetching active session number:', error.message);
+    return null;
+  }
+
+  return data;
 }
 
+
 const getAvgNumActiveSevenDaysRolling = async () => {
-  const result = await pool.query(
-    `SELECT AVG(daily_active_users) AS "avgNumActiveSevenDaysRolling"
-     FROM (SELECT date_trunc('day', "loginTime") AS day,
-                  COUNT(DISTINCT "userId")       AS daily_active_users
-           FROM user_log
-           WHERE "loginTime" > CURRENT_DATE - INTERVAL '7 days'
-           GROUP BY day) AS daily_counts;`
-  );
-  return result.rows[0];
-}
+  const {data, error} = await supabase
+    .rpc('get_avg_num_active_seven_days_rolling');
+
+  if (error) {
+    console.error('Error:', error);
+    return;
+  }
+
+  return data;
+};
 
 module.exports = {
   findUserByEmail,
-  findUserByGoogleId,
   findUserByToken,
   createUser,
   createGoogleUser,

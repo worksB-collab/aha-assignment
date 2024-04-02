@@ -40,20 +40,6 @@ const directPage = (page) => {
 
 app.get('/signin', directPage('signin.html'));
 app.get('/signup', directPage('signup.html'));
-app.get('/profile', (req, res, next) => {
-  try {
-    const {token} = req.cookies;
-    if (!token) {
-      return res.redirect('/signin');
-    }
-    jwt.verify(token, process.env.JWT_SECRET);
-    // If authentication succeeds, serve the dashboard HTML
-    return directPage(`profile.html`)(req, res, next);
-  } catch (error) {
-    // If authentication fails, redirect to sign-in page
-    return res.redirect('/signin');
-  }
-});
 app.get('/dashboard', (req, res, next) => {
   try {
     const {token, email} = req.cookies;
@@ -86,7 +72,7 @@ app.get('/dashboard/google', (req, res, next) => {
 app.use(async (req, res, next) => {
   //todo put logic in authController
   try {
-    const token = req.cookies.token; // Assuming you're using a library like cookie-parser
+    const token = req.cookies.token;
     if (!token) {
       return res.redirect('/signin');
     }
