@@ -9,7 +9,7 @@ async function sendVerificationEmail(userEmail, verificationToken) {
     },
   });
 
-  const verificationUrl = `http://localhost:3000/auth/verify-email?email=${userEmail}&verificationToken=${verificationToken}`;
+  const verificationUrl = `${process.env.SERVER_URL}/auth/verify-email?email=${userEmail}&verificationToken=${verificationToken}`;
 
   await transporter.sendMail({
     from: 'rybit1211@gmail.com',
