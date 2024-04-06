@@ -9,7 +9,7 @@ const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const jwt = require('jsonwebtoken');
 const PORT = process.env.PORT || 3000;
-const authRouter = require('./src/routes/authRoutes');
+const authRouter = require('../src/routes/authRoutes');
 const app = express();
 const session = require('express-session');
 const passport = require("passport");
@@ -22,7 +22,7 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
-require('./src/config/passport-setup');
+require('../src/config/passport-setup');
 
 app.use(logger('dev'));
 app.use(express.json());
