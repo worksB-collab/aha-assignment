@@ -35,6 +35,7 @@ const signIn = async (req, res) => {
     const {email, password} = req.body;
     const verified = await authService.signIn(email, password);
     if (!verified) {
+      res.cookie('email', email, {sameSite: 'strict', maxAge: 30 * 24 * 60 * 60 * 1000});
       res.redirect('/dashboard');
       return;
     }
