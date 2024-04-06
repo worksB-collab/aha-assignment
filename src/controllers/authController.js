@@ -33,7 +33,11 @@ const resendEmail = async (req, res) => {
 const signIn = async (req, res) => {
   try {
     const {email, password} = req.body;
-    await authService.signIn(email, password);
+    const verified = await authService.signIn(email, password);
+    if (!verified) {
+      res.redirect('/dashboard');
+      return;
+    }
     const jwtToken = jwt.sign({email: email}, process.env.JWT_SECRET, {expiresIn: '30d'});
     res.cookie('token', jwtToken, {sameSite: 'strict', maxAge: 30 * 24 * 60 * 60 * 1000});
     res.cookie('email', email, {sameSite: 'strict', maxAge: 30 * 24 * 60 * 60 * 1000});

@@ -24,10 +24,14 @@ const signIn = async (email, password) => {
   if (!user || !await verifyPassword(password, user.password)) {
     throw new Error("email or password incorrect");
   }
+  if (!user.verified) {
+    return false;
+  }
   if (user.googleId) {
     throw new Error("this account was signed up with google");
   }
   await userService.signIn(user.id);
+  return true;
 };
 
 const createOrSignInGoogleUser = async (accessToken, refreshToken, profile, cb) => {
