@@ -8,7 +8,7 @@ const validatePassword = (password, repeatedPassword) => {
   const pass = regex.test(password);
 
   if (!pass) {
-    throw new Error("password invalid");
+    throw new Error("new password invalid");
   }
 }
 const encryptPassword = async (password) => {
