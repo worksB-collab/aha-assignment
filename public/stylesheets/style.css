@@ -72,7 +72,12 @@ button:hover {
 .dashboard-container {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     width: 100%;
-    justify-content: space-around;
+    justify-content: center;
+}
+
+.section-container {
+    width: 400px;
 }

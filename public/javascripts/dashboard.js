@@ -88,7 +88,7 @@ const getStatistics = async () => {
     avgNumActiveSevenDaysRolling.innerText = data.avgNumActiveSevenDaysRolling;
   } else {
     console.error('Failed to load statistics', data.message);
-    // window.location.href = '/signin';
+    window.location.href = '/signin';
   }
 }
 
@@ -146,7 +146,7 @@ const resetPassword = async (oldPassword, newPassword, repeatPassword) => {
       statusText.innerText = data.message;
     }
   } catch (error) {
-    console.error('Error updating name', error);
+    console.error('Error updating password', error);
     window.location.href = '/signin';
   }
 }

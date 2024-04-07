@@ -17,6 +17,7 @@ const verifyEmail = async (req, res) => {
   await authService.verifyToken(verificationToken);
   const jwtToken = jwt.sign({email: email}, process.env.JWT_SECRET, {expiresIn: '30d'});
   res.cookie('token', jwtToken, {maxAge: 30 * 24 * 60 * 60 * 1000});
+  res.cookie('email', email, {maxAge: 30 * 24 * 60 * 60 * 1000});
   res.redirect('/dashboard');
 }
 

@@ -21,7 +21,7 @@ const findUserByEmail = async (email) => {
   return data;
 };
 
-const findUserByToken = async (token) => {
+const findUserByVerificationToken = async (token) => {
   const {data, error} = await supabase
     .from('users')
     .select('*')
@@ -207,7 +207,7 @@ const getAvgNumActiveSevenDaysRolling = async () => {
 
 module.exports = {
   findUserByEmail,
-  findUserByToken,
+  findUserByVerificationToken,
   createUser,
   createGoogleUser,
   login,

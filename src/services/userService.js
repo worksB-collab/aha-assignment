@@ -18,10 +18,6 @@ const createGoogleUser = async (googleId, name, email) => {
   return await userDao.createGoogleUser(googleId, name, email, token);
 };
 
-const findUserByToken = (token) => {
-  return userDao.findUserByToken(token);
-}
-
 const save = async (user) => {
   await userDao.save(user);
 }
@@ -36,6 +32,8 @@ const updateUsername = async (email, name) => {
 
 const verifyToken = async (token) => {
   await userDao.verifyToken(token);
+  const user = await userDao.findUserByVerificationToken(token);
+  await signIn(user.id);
 }
 
 const resetPassword = async (email, oldPassword, newPassword) => {
@@ -65,7 +63,6 @@ module.exports = {
   findUserByEmail,
   createUser,
   createGoogleUser,
-  findUserByToken,
   save,
   signIn,
   updateUsername,
