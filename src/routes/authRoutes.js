@@ -8,8 +8,8 @@ router.get('/verify-email', authController.verifyEmail);
 router.get('/resend-email', authController.resendEmail);
 router.get('/logout', authController.logout);
 router.get('/get-profile', authController.getProfile);
-router.post('/update-username', authController.updateUsername);
-router.post('/reset-password', authController.resetPassword);
+router.put('/update-username', authController.updateUsername);
+router.put('/reset-password', authController.resetPassword);
 router.get('/get-all-users', authController.getAllUsers);
 router.get('/get-statistics', authController.getStatistics);
 

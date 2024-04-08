@@ -13,6 +13,7 @@ const authRouter = require('../src/routes/authRoutes');
 const app = express();
 const session = require('express-session');
 const passport = require("passport");
+const cors = require('cors');
 
 app.use(session({
   secret: 'aha',
@@ -23,6 +24,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 require('../src/config/passport-setup');
+app.use(cors());
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -45,7 +47,6 @@ app.get('/dashboard', (req, res, next) => {
     const {token, email} = req.cookies;
     if (token) {
       jwt.verify(token, process.env.JWT_SECRET);
-      // If authentication succeeds, serve the dashboard HTML
       return directPage(`verifiedDashboard.html`)(req, res, next);
     } else if (!token && email) {
       return directPage(`unverifiedDashboard.html`)(req, res, next);
@@ -69,50 +70,30 @@ app.get('/dashboard/google', (req, res, next) => {
   }
 });
 
+const swaggerDocument = require('../src/swagger.json');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.use(async (req, res, next) => {
-  //todo put logic in authController
   try {
     const token = req.cookies.token;
     if (!token) {
       return res.redirect('/signin');
     }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // todo get user
-    req.user = decoded; // Or fetch user details from the database using decoded.userId
+    jwt.verify(token, process.env.JWT_SECRET);
     return res.redirect('/dashboard');
   } catch (error) {
     return res.redirect('/signin');
   }
 });
 
-
-const swaggerOptions = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Your API Documentation',
-      version: '1.0.0',
-      description: 'Documentation for your API endpoints',
-    },
-  },
-  apis: ['./src/routes/*.js'], // Path to the API routes
-};
-
-const swaggerSpec = swaggerJSDoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-// catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
 
-// error handler
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
   res.status(err.status || 500);
   res.json({
     message: err.message,

@@ -23,7 +23,6 @@ const encryptPassword = async (password) => {
 
 const verifyPassword = async (password, hash) => {
   try {
-    // 對比原始密碼與散列值
     return await bcrypt.compare(password, hash);
   } catch (error) {
     throw error;

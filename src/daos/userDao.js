@@ -11,9 +11,6 @@ const findUserByEmail = async (email) => {
     .eq('email', email)
     .single();
 
-  if (!data) {
-    return data;
-  }
   if (error) {
     throw new Error(error.details);
   }
@@ -28,9 +25,6 @@ const findUserByVerificationToken = async (token) => {
     .eq('token', token)
     .single();
 
-  if (!data) {
-    return data;
-  }
   if (error) {
     throw new Error(error.details);
   }
@@ -40,50 +34,41 @@ const findUserByVerificationToken = async (token) => {
 
 const createUser = async (name, email, password, token) => {
   const {data, error} = await supabase
-    .from('users')
-    .insert([{name, email, password, token, verified: false, createTime: new Date()}])
-    .single();
+      .from('users')
+      .insert([{name, email, password, token, verified: false, createTime: new Date()}])
+      .select()
 
-  if (!data) {
-    return data;
-  }
   if (error) {
     throw new Error(error.details);
   }
 
-  return data;
+  return data[0];
 };
 
 const createGoogleUser = async (googleId, name, email, token) => {
   const {data, error} = await supabase
-    .from('users')
-    .insert([{googleId, name, email, token, verified: true, createTime: new Date()}])
-    .single();
+      .from('users')
+      .insert([{googleId, name, email, token, verified: true, createTime: new Date()}])
+      .select()
 
-  if (!data) {
-    return data;
-  }
   if (error) {
     throw new Error(error.details);
   }
 
-  return data;
+  return data[0];
 };
 
 const login = async (userId) => {
   const {data, error} = await supabase
-    .from('user_log')
-    .insert([{userId, loginTime: new Date()}])
-    .single();
+      .from('user_log')
+      .insert([{userId, loginTime: new Date()}])
+      .select();
 
-  if (!data) {
-    return data;
-  }
   if (error) {
     throw new Error(error.details);
   }
 
-  return data;
+  return data[0];
 };
 
 const save = async (user) => {
@@ -93,9 +78,6 @@ const save = async (user) => {
     .update({name, password, token, verified})
     .match({id});
 
-  if (!data) {
-    return data;
-  }
   if (error) {
     throw new Error(error.details);
   }
@@ -109,9 +91,6 @@ const updateUsername = async (email, name) => {
     .update({name})
     .match({email});
 
-  if (!data) {
-    return data;
-  }
   if (error) {
     throw new Error(error.details);
   }
@@ -125,9 +104,6 @@ const verifyToken = async (token) => {
     .update({verified: true})
     .match({token});
 
-  if (!data) {
-    return data;
-  }
   if (error) {
     throw new Error(error.details);
   }
@@ -141,9 +117,6 @@ const resetPassword = async (email, password) => {
     .update({password})
     .match({email});
 
-  if (!data) {
-    return data;
-  }
   if (error) {
     throw new Error(error.details);
   }
@@ -170,9 +143,6 @@ const getAllUserCount = async () => {
     .from('users')
     .select('id', {count: 'exact'});
 
-  if (!data) {
-    return data;
-  }
   if (error) {
     throw new Error(error.details);
   }

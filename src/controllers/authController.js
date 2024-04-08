@@ -54,11 +54,9 @@ const googleSignIn = passport.authenticate('google', {scope: ['profile', 'email'
 const googleCallback = passport.authenticate('google', {failureRedirect: '/signin'});
 
 const onGoogleSignInSuccessful = (req, res) => {
-  // Successful authentication, redirect home.
-  const user = req.session.passport.user;
-
   res.redirect('/dashboard');
 }
+
 const redirectGoogleUserToDashboard = (req, res) => {
   const user = req.user;
   res.cookie('token', user.token, {sameSite: 'strict', maxAge: 30 * 24 * 60 * 60 * 1000});

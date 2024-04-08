@@ -8,13 +8,13 @@ const findUserByEmail = async (email) => {
 
 const createUser = async (name, email, password) => {
   const encryptedPassword = await encryptPassword(password);
-  const token = uuidv4()
+  const token = uuidv4();
   await userDao.createUser(name, email, encryptedPassword, token);
   return token;
 };
 
 const createGoogleUser = async (googleId, name, email) => {
-  const token = uuidv4()
+  const token = uuidv4();
   return await userDao.createGoogleUser(googleId, name, email, token);
 };
 

@@ -97,7 +97,7 @@ const updateName = async (newName) => {
   const email = getCookie('email');
   try {
     const res = await fetch(`/auth/update-username`, {
-      method: 'POST',
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
@@ -127,7 +127,7 @@ const resetPassword = async (oldPassword, newPassword, repeatPassword) => {
 
   try {
     const res = await fetch(`/auth/reset-password`, {
-      method: 'POST',
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`

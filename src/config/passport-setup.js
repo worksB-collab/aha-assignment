@@ -12,7 +12,6 @@ passport.use(new GoogleStrategy({
   }
 ));
 
-// Serialize and deserialize user instances to and from the session.
 passport.serializeUser(function (user, done) {
   done(null, user);
 });

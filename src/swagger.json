@@ -1,0 +1,377 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Auth API",
+    "description": "API for authentication and user management."
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/signup": {
+      "post": {
+        "summary": "Sign up a new user",
+        "description": "",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User signup data",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Signup"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/signin": {
+      "post": {
+        "summary": "Sign in an existing user",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User login data",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Login"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation, redirect to dashboard."
+          },
+          "400": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/verify-email": {
+      "get": {
+        "summary": "Verify user email",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "email",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "verificationToken",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Email verified successfully"
+          }
+        }
+      }
+    },
+    "/logout": {
+      "get": {
+        "summary": "Log out a user",
+        "responses": {
+          "200": {
+            "description": "Successfully logged out"
+          }
+        }
+      }
+    },
+    "/get-profile": {
+      "get": {
+        "summary": "Get user profile",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "email",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile information"
+          },
+          "400": {
+            "description": "Error retrieving profile"
+          }
+        }
+      }
+    },
+    "/resend-email": {
+      "get": {
+        "summary": "Resend verification email",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "email",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Email resent successfully"
+          },
+          "404": {
+            "description": "Account not found or expired"
+          }
+        }
+      }
+    },
+    "/get-all-users": {
+      "get": {
+        "summary": "Get all users",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          },
+          "400": {
+            "description": "Error retrieving users"
+          }
+        }
+      }
+    },
+    "/get-statistics": {
+      "get": {
+        "summary": "Get statistics",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Statistics data"
+          },
+          "400": {
+            "description": "Error retrieving statistics"
+          }
+        }
+      }
+    },
+    "/update-username": {
+      "put": {
+        "summary": "Update user's username",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateUsername"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Username updated successfully"
+          },
+          "400": {
+            "description": "Error updating username"
+          }
+        }
+      }
+    },
+    "/reset-password": {
+      "put": {
+        "summary": "Reset user's password",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ResetPassword"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Password reset successfully"
+          },
+          "400": {
+            "description": "Error resetting password"
+          }
+        }
+      }
+    },
+    "/google": {
+      "get": {
+        "summary": "Google sign in",
+        "responses": {
+          "302": {
+            "description": "Redirect to Google sign in"
+          }
+        }
+      }
+    },
+    "/google/callback": {
+      "get": {
+        "summary": "Google sign in callback",
+        "responses": {
+          "302": {
+            "description": "Redirect to dashboard on success or sign in on failure"
+          }
+        }
+      }
+    },
+    "/google/logout": {
+      "get": {
+        "summary": "Google logout",
+        "responses": {
+          "302": {
+            "description": "Redirect to home on logout"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Signup": {
+      "type": "object",
+      "required": [
+        "name",
+        "email",
+        "password",
+        "repeatedPassword"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "repeatedPassword": {
+          "type": "string"
+        }
+      }
+    },
+    "Login": {
+      "type": "object",
+      "required": [
+        "email",
+        "password"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "UpdateUsername": {
+      "type": "object",
+      "required": [
+        "email",
+        "newName"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "newName": {
+          "type": "string"
+        }
+      }
+    },
+    "ResetPassword": {
+      "type": "object",
+      "required": [
+        "email",
+        "oldPassword",
+        "newPassword",
+        "repeatPassword"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "oldPassword": {
+          "type": "string"
+        },
+        "newPassword": {
+          "type": "string"
+        },
+        "repeatPassword": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
