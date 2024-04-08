@@ -274,16 +274,6 @@
         }
       }
     },
-    "/google/logout": {
-      "get": {
-        "summary": "Google logout",
-        "responses": {
-          "302": {
-            "description": "Redirect to home on logout"
-          }
-        }
-      }
-    }
   },
   "definitions": {
     "Signup": {

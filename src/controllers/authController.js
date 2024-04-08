@@ -76,12 +76,8 @@ const logout = (req, res) => {
   res.clearCookie('googleId', {
     sameSite: 'strict',
   });
-  res.redirect('/signin');
-}
-
-const googleLogout = (req, res) => {
   req.logout();
-  res.redirect('/');
+  res.redirect('/signin');
 }
 
 const getProfile = async (req, res) => {
@@ -146,7 +142,6 @@ module.exports = {
   onGoogleSignInSuccessful,
   googleCallback,
   logout,
-  googleLogout,
   getProfile,
   updateUsername,
   redirectGoogleUserToDashboard,

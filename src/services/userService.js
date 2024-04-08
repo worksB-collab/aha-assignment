@@ -18,6 +18,10 @@ const createGoogleUser = async (googleId, name, email) => {
   return await userDao.createGoogleUser(googleId, name, email, token);
 };
 
+const updateGoogleId = async (googleId, email) => {
+  await userDao.updateGoogleId(googleId, email);
+};
+
 const save = async (user) => {
   await userDao.save(user);
 }
@@ -63,6 +67,7 @@ module.exports = {
   findUserByEmail,
   createUser,
   createGoogleUser,
+  updateGoogleId,
   save,
   signIn,
   updateUsername,

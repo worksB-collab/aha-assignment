@@ -58,6 +58,19 @@ const createGoogleUser = async (googleId, name, email, token) => {
   return data[0];
 };
 
+const updateGoogleId = async (googleId, email) => {
+  const {data, error} = await supabase
+      .from('users')
+      .update({googleId})
+      .match({email});
+
+  if (error) {
+    throw new Error(error.details);
+  }
+
+  return data[0];
+};
+
 const login = async (userId) => {
   const {data, error} = await supabase
       .from('user_log')
@@ -180,6 +193,7 @@ module.exports = {
   findUserByVerificationToken,
   createUser,
   createGoogleUser,
+  updateGoogleId,
   login,
   save,
   updateUsername,

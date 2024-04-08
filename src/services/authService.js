@@ -21,17 +21,16 @@ const verifyToken = async (token) => {
 
 const signIn = async (email, password) => {
   const user = await userService.findUserByEmail(email);
-  if (!user || !await verifyPassword(password, user.password)) {
-    throw new Error("email or password incorrect");
+  if (user) {
+    if (!user.verified) {
+      return false;
+    }
+    if (user.googleId || await verifyPassword(password, user.password)) {
+      await userService.signIn(user.id);
+      return true;
+    }
   }
-  if (!user.verified) {
-    return false;
-  }
-  if (user.googleId) {
-    throw new Error("this account was signed up with google");
-  }
-  await userService.signIn(user.id);
-  return true;
+  throw new Error("email or password incorrect");
 };
 
 const createOrSignInGoogleUser = async (accessToken, refreshToken, profile, cb) => {
@@ -40,6 +39,8 @@ const createOrSignInGoogleUser = async (accessToken, refreshToken, profile, cb) 
     let user = await userService.findUserByEmail(email);
     if (!user) {
       user = await userService.createGoogleUser(profile.id, profile.displayName, email);
+    } else if (!user.googleId) {
+      await userService.updateGoogleId(profile.id, email);
     }
     await userService.signIn(user.id);
     const userData = {

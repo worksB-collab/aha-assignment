@@ -16,6 +16,5 @@ router.get('/get-statistics', authController.getStatistics);
 // Google OAuth
 router.get('/google', authController.googleSignIn, authController.onGoogleSignInSuccessful);
 router.get('/google/callback', authController.googleCallback, authController.redirectGoogleUserToDashboard);
-router.get('/google/logout', authController.googleLogout);
 
 module.exports = router;
