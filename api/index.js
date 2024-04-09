@@ -5,13 +5,12 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const jwt = require('jsonwebtoken');
 const PORT = process.env.PORT || 3000;
 const authRouter = require('../src/routes/authRoutes');
 const app = express();
-const session = require('express-session');
+const session = require('cookie-session');
 const passport = require("passport");
 const cors = require('cors');
 

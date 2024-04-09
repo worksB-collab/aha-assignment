@@ -76,7 +76,6 @@ const logout = (req, res) => {
   res.clearCookie('googleId', {
     sameSite: 'strict',
   });
-  req.logout();
   res.redirect('/signin');
 }
 
