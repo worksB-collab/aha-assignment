@@ -25,9 +25,9 @@ const resendEmail = async (req, res) => {
   try {
     const {email} = req.query;
     await authService.resendVerificationEmail(email);
-    res.status(201).send('Email sent');
+    res.status(201).send({message: 'Email sent'});
   } catch (error) {
-    res.status(404).send('Account not found or expired');
+    res.status(404).send({message: 'Account not found or expired'});
   }
 }
 
@@ -62,7 +62,6 @@ const redirectGoogleUserToDashboard = (req, res) => {
   res.cookie('token', user.token, {sameSite: 'strict', maxAge: 30 * 24 * 60 * 60 * 1000});
   res.cookie('email', user.email, {sameSite: 'strict', maxAge: 30 * 24 * 60 * 60 * 1000});
   res.cookie('googleId', user.googleId, {sameSite: 'strict', maxAge: 30 * 24 * 60 * 60 * 1000});
-  req.user = user;
   res.redirect('/dashboard/google');
 };
 

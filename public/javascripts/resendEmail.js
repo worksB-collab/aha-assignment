@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
       method: 'GET'
     });
     const data = await res.json();
-    console.log(data);
+    const statusText = document.getElementById('status');
+    statusText.innerText = data.message;
   };
 });

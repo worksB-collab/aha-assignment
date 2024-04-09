@@ -24,7 +24,7 @@ button {
 }
 
 button:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
 }
 
 .response-data {
@@ -73,11 +73,16 @@ button:hover {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    align-items: center;
     width: 100%;
     justify-content: center;
 }
 
 .section-container {
     width: 400px;
+}
+
+.user-list {
+    overflow: scroll;
+    width: fit-content;
+    height: 50vh;
 }
