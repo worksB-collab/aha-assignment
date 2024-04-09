@@ -6,30 +6,28 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const findUserByEmail = async (email) => {
   const {data, error} = await supabase
-    .from('users')
-    .select('*')
-    .eq('email', email)
-    .single();
+      .from('users')
+      .select('*')
+      .eq('email', email);
 
   if (error) {
     throw new Error(error.details);
   }
 
-  return data;
+  return data[0];
 };
 
 const findUserByVerificationToken = async (token) => {
   const {data, error} = await supabase
-    .from('users')
-    .select('*')
-    .eq('token', token)
-    .single();
+      .from('users')
+      .select('*')
+      .eq('token', token);
 
   if (error) {
     throw new Error(error.details);
   }
 
-  return data;
+  return data[0];
 };
 
 const createUser = async (name, email, password, token) => {

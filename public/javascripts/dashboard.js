@@ -107,6 +107,7 @@ const updateName = async (newName) => {
     const data = await res.json();
     if (res.status === 200) {
       document.getElementById('name').innerText = newName;
+      document.getElementById('new-name').value = '';
     } else {
       console.error('Failed to update name', data.message);
     }
