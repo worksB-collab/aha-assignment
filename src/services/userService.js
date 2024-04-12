@@ -42,7 +42,11 @@ const verifyToken = async (token) => {
 
 const resetPassword = async (email, oldPassword, newPassword) => {
   const user = await findUserByEmail(email);
-  if (!user || !await verifyPassword(oldPassword, user.password)) {
+  if (!user) {
+    throw new Error("email or old password incorrect");
+  } else if (!user.password) { // google account
+    throw new Error("no password needed for a google account");
+  } else if (!await verifyPassword(oldPassword, user.password)) {
     throw new Error("email or old password incorrect");
   }
   await userDao.resetPassword(email, await encryptPassword(newPassword));
