@@ -59,7 +59,7 @@ const getStatistics = async () => {
    return {
      totalNumSignUp,
      activeSessionNumberToday,
-     avgNumActiveSevenDaysRolling,
+     avgNumActiveSevenDaysRolling: Number(avgNumActiveSevenDaysRolling).toFixed(2),
    }
 }
 
