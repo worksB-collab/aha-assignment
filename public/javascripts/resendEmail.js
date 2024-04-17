@@ -1,4 +1,4 @@
-import {getCookie} from "./utils.js";
+import {getCookie} from "./cookieUtil.js";
 
 document.addEventListener('DOMContentLoaded', () => {
   const button = document.getElementById('resendEmail');
