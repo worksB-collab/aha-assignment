@@ -13,6 +13,11 @@ const session = require('cookie-session');
 const passport = require("passport");
 const cors = require('cors');
 
+const corsOptions = {
+  origin: process.env.SERVER_URL,
+};
+app.use(cors(corsOptions));
+
 app.use(session({
   secret: 'aha',
   resave: false,
@@ -22,7 +27,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 require('../src/config/passport-setup');
-app.use(cors());
 
 app.use(logger('dev'));
 app.use(express.json());
