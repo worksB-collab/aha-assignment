@@ -44,10 +44,14 @@ const resetPassword = async (email, oldPassword, newPassword) => {
   const user = await findUserByEmail(email);
   if (!user) {
     throw new Error("email or old password incorrect");
-  } else if (!user.password) { // google account
+  } else if (!user.password && user.googleId) { // google account without password
     throw new Error("no password needed for a google account");
-  } else if (!await verifyPassword(oldPassword, user.password)) {
+  }
+
+  if (!await verifyPassword(oldPassword, user.password)) {
     throw new Error("email or old password incorrect");
+  } else if (!await verifyPassword(newPassword, user.password)) {
+    throw new Error("new password should not be the same as the old one");
   }
   await userDao.resetPassword(email, await encryptPassword(newPassword));
 }
