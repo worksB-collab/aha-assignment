@@ -76,7 +76,7 @@ const _authenticate = (auth) => {
 
 const resetPassword = async (auth, email, oldPassword, newPassword, repeatPassword) => {
   _authenticate(auth);
-  validatePassword(newPassword, repeatPassword)
+  validatePassword(newPassword, repeatPassword);
   await userService.resetPassword(email, oldPassword, newPassword);
 }
 

@@ -11,6 +11,7 @@ const validatePassword = (password, repeatedPassword) => {
     throw new Error("new password invalid");
   }
 }
+
 const encryptPassword = async (password) => {
   try {
     const saltRounds = 10;

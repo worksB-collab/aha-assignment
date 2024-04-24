@@ -26,7 +26,7 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
-require('../src/config/passport-setup');
+require('../src/configs/passport-setup');
 
 app.use(logger('dev'));
 app.use(express.json());
