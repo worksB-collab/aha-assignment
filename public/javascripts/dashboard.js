@@ -26,7 +26,7 @@ const getProfile = async () => {
         console.error('Failed to load profile', data.message);
         window.location.href = '/signin';
     }
-}
+};
 
 const getAllUsers = async () => {
     const token = getCookie('token');
@@ -67,7 +67,7 @@ const getAllUsers = async () => {
         console.error('Failed to load user list', data.message);
         window.location.href = '/signin';
     }
-}
+};
 
 const getStatistics = async () => {
     const token = getCookie('token');
@@ -90,7 +90,7 @@ const getStatistics = async () => {
         console.error('Failed to load statistics', data.message);
         window.location.href = '/signin';
     }
-}
+};
 
 const updateName = async (newName) => {
     const token = getCookie('token');
@@ -115,7 +115,7 @@ const updateName = async (newName) => {
         console.error('Error updating name', error);
         window.location.href = '/signin';
     }
-}
+};
 
 const resetPassword = async (oldPassword, newPassword, repeatPassword) => {
     const token = getCookie('token');
@@ -155,7 +155,7 @@ const resetPassword = async (oldPassword, newPassword, repeatPassword) => {
         console.error('Error updating password', error);
         window.location.href = '/signin';
     }
-}
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     const button = document.getElementById('apply-name-btn');

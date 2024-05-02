@@ -1,6 +1,6 @@
 const userService = require('../services/userService');
 const {sendVerificationEmail} = require("./emailService");
-const {validatePassword, verifyPassword} = require("../utils/passwordUtil");
+const {validatePassword, isPasswordCorrect} = require("../utils/passwordUtil");
 const jwt = require("jsonwebtoken");
 const {format} = require("../utils/dateTimeUtil");
 
@@ -13,11 +13,11 @@ const signUp = async (name, email, password, repeatedPassword) => {
 const resendVerificationEmail = async (email) => {
   const user = await userService.findUserByEmail(email);
   await sendVerificationEmail(email, user.token);
-}
+};
 
 const verifyToken = async (token) => {
   await userService.verifyToken(token);
-}
+};
 
 const signIn = async (email, password) => {
   const user = await userService.findUserByEmail(email);
@@ -25,7 +25,7 @@ const signIn = async (email, password) => {
     if (!user.verified) {
       return false;
     }
-    if (user.googleId || await verifyPassword(password, user.password)) {
+    if (user.googleId || await isPasswordCorrect(password, user.password)) {
       await userService.signIn(user.id);
       return true;
     }
@@ -53,10 +53,10 @@ const createOrSignInGoogleUser = async (accessToken, refreshToken, profile, cb) 
   } catch (error) {
     return cb(error, null);
   }
-}
+};
 
 const getProfile = async (auth, email) => {
-  _authenticate(auth);
+  _authenticateToken(auth);
   const user = await userService.findUserByEmail(email);
   return {
     name: user.name,
@@ -65,23 +65,23 @@ const getProfile = async (auth, email) => {
 }
 
 const updateUsername = async (auth, email, newName) => {
-  _authenticate(auth);
+  _authenticateToken(auth);
   await userService.updateUsername(email, newName);
-}
+};
 
-const _authenticate = (auth) => {
+const _authenticateToken = (auth) => {
   const token = auth ? auth.split('Bearer ')[1] : null;
   jwt.verify(token, process.env.JWT_SECRET);
-}
+};
 
 const resetPassword = async (auth, email, oldPassword, newPassword, repeatPassword) => {
-  _authenticate(auth);
+  _authenticateToken(auth);
   validatePassword(newPassword, repeatPassword);
   await userService.resetPassword(email, oldPassword, newPassword);
-}
+};
 
 const getAllUsers = async (auth) => {
-  _authenticate(auth);
+  _authenticateToken(auth);
   const userList = await userService.getAllUsersWithLoginDetail();
   return userList.map(user => {
     return {
@@ -91,12 +91,12 @@ const getAllUsers = async (auth) => {
       lastLoginTime: format(user.lastLoginTime),
     }
   });
-}
+};
 
 const getStatistics = async (auth) => {
-  _authenticate(auth);
+  _authenticateToken(auth);
   return await userService.getStatistics();
-}
+};
 
 module.exports = {
   signUp,
@@ -109,4 +109,4 @@ module.exports = {
   resetPassword,
   getAllUsers,
   getStatistics,
-}
+};

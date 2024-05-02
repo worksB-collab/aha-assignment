@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-async function sendVerificationEmail(userEmail, verificationToken) {
+const sendVerificationEmail = async (userEmail, verificationToken) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -17,7 +17,7 @@ async function sendVerificationEmail(userEmail, verificationToken) {
     subject: 'Verify Your Email',
     html: `<p>Please verify your email by clicking on the link below:</p><p><a href="${verificationUrl}">Verify Email</a></p>`,
   });
-}
+};
 
 module.exports = {
   sendVerificationEmail,

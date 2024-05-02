@@ -135,7 +135,6 @@ const resetPassword = async (email, password) => {
   return data;
 };
 
-
 const getAllUsersWithLoginDetail = async () => {
   const {data, error} = await supabase
     .rpc('get_all_users_with_login_detail');
@@ -147,7 +146,6 @@ const getAllUsersWithLoginDetail = async () => {
 
   return data;
 };
-
 
 const getAllUserCount = async () => {
   const {data, error} = await supabase
@@ -161,7 +159,6 @@ const getAllUserCount = async () => {
   return data.length;
 };
 
-
 const getActiveSessionNumberToday = async () => {
   const {data, error} = await supabase.rpc('get_active_session_number_today');
 
@@ -172,7 +169,6 @@ const getActiveSessionNumberToday = async () => {
 
   return data;
 }
-
 
 const getAvgNumActiveSevenDaysRolling = async () => {
   const {data, error} = await supabase
