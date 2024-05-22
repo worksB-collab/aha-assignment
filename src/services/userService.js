@@ -1,5 +1,5 @@
 const userDao = require('../daos/userDao');
-const {encryptPassword, verifyPassword, validatePassword} = require("../utils/passwordUtil");
+const {encryptPassword, verifyPassword} = require("../utils/passwordUtil");
 const {v4: uuidv4} = require('uuid');
 
 const findUserByEmail = async (email) => {

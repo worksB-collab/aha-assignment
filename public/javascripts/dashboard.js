@@ -136,6 +136,7 @@ const resetPassword = async (oldPassword, newPassword, repeatPassword) => {
             body: JSON.stringify({email, oldPassword, newPassword, repeatPassword})
         });
         const data = await res.json();
+        const idleTime = 2000;
         if (res.status === 200) {
             statusText.innerText = 'updated!';
             oldPasswordField.value = '';
@@ -143,13 +144,13 @@ const resetPassword = async (oldPassword, newPassword, repeatPassword) => {
             repeatPasswordField.value = '';
             setTimeout(() => {
                 statusText.innerText = '';
-            }, 2000);
+            }, idleTime);
         } else {
             console.error('Failed to update password', data.message);
             statusText.innerText = data.message;
             setTimeout(() => {
                 statusText.innerText = '';
-            }, 2000);
+            }, idleTime);
         }
     } catch (error) {
         console.error('Error updating password', error);

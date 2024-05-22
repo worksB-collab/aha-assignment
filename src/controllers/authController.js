@@ -1,11 +1,13 @@
 const authService = require('../services/authService');
 const passport = require("passport");
 const jwt = require('jsonwebtoken');
+const oneMonth = 30 * 24 * 60 * 60 * 1000;
+
 const signUp = async (req, res) => {
   try {
     const {name, email, password, repeatedPassword} = req.body;
     await authService.signUp(name, email, password, repeatedPassword);
-    res.cookie('email', email, {maxAge: 30 * 24 * 60 * 60 * 1000});
+    res.cookie('email', email, {maxAge: oneMonth});
     res.redirect('/dashboard');
   } catch (error) {
     res.status(500).send({message: error.message});
@@ -16,8 +18,8 @@ const verifyEmail = async (req, res) => {
   const {email, verificationToken} = req.query;
   await authService.verifyToken(verificationToken);
   const jwtToken = jwt.sign({email: email}, process.env.JWT_SECRET, {expiresIn: '30d'});
-  res.cookie('token', jwtToken, {maxAge: 30 * 24 * 60 * 60 * 1000});
-  res.cookie('email', email, {maxAge: 30 * 24 * 60 * 60 * 1000});
+  res.cookie('token', jwtToken, {maxAge: oneMonth});
+  res.cookie('email', email, {maxAge: oneMonth});
   res.redirect('/dashboard');
 }
 
@@ -36,13 +38,13 @@ const signIn = async (req, res) => {
     const {email, password} = req.body;
     const verified = await authService.signIn(email, password);
     if (!verified) {
-      res.cookie('email', email, {sameSite: 'strict', maxAge: 30 * 24 * 60 * 60 * 1000});
+      res.cookie('email', email, {sameSite: 'strict', maxAge: oneMonth});
       res.redirect('/dashboard');
       return;
     }
     const jwtToken = jwt.sign({email: email}, process.env.JWT_SECRET, {expiresIn: '30d'});
-    res.cookie('token', jwtToken, {sameSite: 'strict', maxAge: 30 * 24 * 60 * 60 * 1000});
-    res.cookie('email', email, {sameSite: 'strict', maxAge: 30 * 24 * 60 * 60 * 1000});
+    res.cookie('token', jwtToken, {sameSite: 'strict', maxAge: oneMonth});
+    res.cookie('email', email, {sameSite: 'strict', maxAge: oneMonth});
     res.redirect('/dashboard');
   } catch (error) {
     res.status(400).send({message: error.message});
@@ -59,9 +61,9 @@ const onGoogleSignInSuccessful = (req, res) => {
 
 const redirectGoogleUserToDashboard = (req, res) => {
   const user = req.user;
-  res.cookie('token', user.token, {sameSite: 'strict', maxAge: 30 * 24 * 60 * 60 * 1000});
-  res.cookie('email', user.email, {sameSite: 'strict', maxAge: 30 * 24 * 60 * 60 * 1000});
-  res.cookie('googleId', user.googleId, {sameSite: 'strict', maxAge: 30 * 24 * 60 * 60 * 1000});
+  res.cookie('token', user.token, {sameSite: 'strict', maxAge: oneMonth});
+  res.cookie('email', user.email, {sameSite: 'strict', maxAge: oneMonth});
+  res.cookie('googleId', user.googleId, {sameSite: 'strict', maxAge: oneMonth});
   res.redirect('/dashboard/google');
 };
 
