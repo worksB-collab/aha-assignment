@@ -14,10 +14,10 @@ const format = (dateString) => {
 
   const pad = (number) => {
     return number < 10 ? '0' + number : number;
-  }
+  };
 
   return `${monthNames[monthIndex]} ${pad(day)}, ${year} ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-}
+};
 
 module.exports = {
   format,

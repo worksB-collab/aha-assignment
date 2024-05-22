@@ -57,7 +57,7 @@ const googleCallback = passport.authenticate('google', {failureRedirect: '/signi
 
 const onGoogleSignInSuccessful = (req, res) => {
   res.redirect('/dashboard');
-}
+};
 
 const redirectGoogleUserToDashboard = (req, res) => {
   const user = req.user;
@@ -78,7 +78,7 @@ const logout = (req, res) => {
     sameSite: 'strict',
   });
   res.redirect('/signin');
-}
+};
 
 const getProfile = async (req, res) => {
   const auth = req.headers.authorization;
@@ -100,7 +100,7 @@ const updateUsername = async (req, res) => {
   } catch (error) {
     res.status(400).send({message: error.message});
   }
-}
+};
 
 const resetPassword = async (req, res) => {
   const auth = req.headers.authorization;
@@ -111,7 +111,7 @@ const resetPassword = async (req, res) => {
   } catch (error) {
     res.status(400).send({message: error.message});
   }
-}
+};
 
 const getAllUsers = async (req, res) => {
   const auth = req.headers.authorization;
@@ -121,7 +121,7 @@ const getAllUsers = async (req, res) => {
   } catch (error) {
     res.status(400).send({message: error.message});
   }
-}
+};
 
 const getStatistics = async (req, res) => {
   const auth = req.headers.authorization;
@@ -131,7 +131,7 @@ const getStatistics = async (req, res) => {
   } catch (error) {
     res.status(400).send({message: error.message});
   }
-}
+};
 
 module.exports = {
   signUp,
@@ -148,4 +148,4 @@ module.exports = {
   resetPassword,
   getAllUsers,
   getStatistics,
-}
+};

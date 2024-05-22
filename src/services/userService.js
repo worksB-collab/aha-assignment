@@ -1,10 +1,10 @@
 const userDao = require('../daos/userDao');
-const {encryptPassword, verifyPassword} = require("../utils/passwordUtil");
+const {encryptPassword, isPasswordCorrect} = require("../utils/passwordUtil");
 const {v4: uuidv4} = require('uuid');
 
 const findUserByEmail = async (email) => {
   return userDao.findUserByEmail(email);
-}
+};
 
 const createUser = async (name, email, password) => {
   const encryptedPassword = await encryptPassword(password);
@@ -24,21 +24,21 @@ const updateGoogleId = async (googleId, email) => {
 
 const save = async (user) => {
   await userDao.save(user);
-}
+};
 
 const signIn = async (userId) => {
   await userDao.login(userId);
-}
+};
 
 const updateUsername = async (email, name) => {
   await userDao.updateUsername(email, name);
-}
+};
 
 const verifyToken = async (token) => {
   await userDao.verifyToken(token);
   const user = await userDao.findUserByVerificationToken(token);
   await signIn(user.id);
-}
+};
 
 const resetPassword = async (email, oldPassword, newPassword) => {
   const user = await findUserByEmail(email);
@@ -48,17 +48,17 @@ const resetPassword = async (email, oldPassword, newPassword) => {
     throw new Error("no password needed for a google account");
   }
 
-  if (!await verifyPassword(oldPassword, user.password)) {
+  if (!await isPasswordCorrect(oldPassword, user.password)) {
     throw new Error("email or old password incorrect");
-  } else if (!await verifyPassword(newPassword, user.password)) {
+  } else if (await isPasswordCorrect(newPassword, user.password)) {
     throw new Error("new password should not be the same as the old one");
   }
   await userDao.resetPassword(email, await encryptPassword(newPassword));
-}
+};
 
 const getAllUsersWithLoginDetail = async () => {
   return await userDao.getAllUsersWithLoginDetail();
-}
+};
 
 const getStatistics = async () => {
   const totalNumSignUp = await userDao.getAllUserCount();
@@ -69,7 +69,7 @@ const getStatistics = async () => {
      activeSessionNumberToday,
      avgNumActiveSevenDaysRolling: Number(avgNumActiveSevenDaysRolling).toFixed(2),
    }
-}
+};
 
 module.exports = {
   findUserByEmail,

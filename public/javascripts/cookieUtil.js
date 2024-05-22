@@ -1,8 +1,8 @@
 const getCookie = (name) => {
   const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) {
-    let cookieValue = parts.pop().split(';').shift();
+  const cookieArray = value.split(`; ${name}=`);
+  if (cookieArray.length === 2) {
+    let cookieValue = cookieArray.pop().split(';').shift();
     try {
       cookieValue = decodeURIComponent(cookieValue);
     } catch (e) {
@@ -10,6 +10,6 @@ const getCookie = (name) => {
     }
     return cookieValue;
   }
-}
+};
 
-export {getCookie}
+export {getCookie};

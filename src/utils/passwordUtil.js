@@ -10,7 +10,7 @@ const validatePassword = (password, repeatedPassword) => {
   if (!pass) {
     throw new Error("new password invalid");
   }
-}
+};
 
 const encryptPassword = async (password) => {
   try {
@@ -22,7 +22,7 @@ const encryptPassword = async (password) => {
   }
 };
 
-const verifyPassword = async (password, hash) => {
+const isPasswordCorrect = async (password, hash) => {
   try {
     return await bcrypt.compare(password, hash);
   } catch (error) {
@@ -31,5 +31,5 @@ const verifyPassword = async (password, hash) => {
 };
 
 module.exports = {
-  validatePassword, encryptPassword, verifyPassword
+  validatePassword, encryptPassword, isPasswordCorrect
 };
