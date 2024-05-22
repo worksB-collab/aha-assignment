@@ -49,7 +49,7 @@ const resetPassword = async (email, oldPassword, newPassword) => {
   }
 
   if (!await isPasswordCorrect(oldPassword, user.password)) {
-    throw new Error("email or old password incorrect");
+    throw new Error("old password incorrect");
   } else if (await isPasswordCorrect(newPassword, user.password)) {
     throw new Error("new password should not be the same as the old one");
   }
