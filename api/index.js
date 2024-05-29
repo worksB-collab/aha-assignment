@@ -72,6 +72,7 @@ app.get('/dashboard/google', (req, res, next) => {
   }
 });
 
+// workaround to solve swagger style not applied issue
 const CSS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.3.0/swagger-ui.min.css';
 const swaggerDocument = require('../src/swagger.json');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {

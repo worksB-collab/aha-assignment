@@ -1,4 +1,4 @@
-// for local tests
+// for local tests on postgresql
 const {Pool} = require('pg');
 
 // create table if not exist
